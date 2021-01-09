@@ -84,6 +84,17 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	request, err := http.NewRequest("POST", ghAuthURL, bytes.NewBuffer(authJSON))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Accept", "application/json")
+	client := &http.Client{}
+	print("Sending login request to " + ghAuthURL + " ... ")
+	response, err := client.Do(request)
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+
 }
 
 func main() {
