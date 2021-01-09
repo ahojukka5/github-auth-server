@@ -95,8 +95,7 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 
 	authJSON, err := json.Marshal(&authInfo)
 	if err != nil {
-		println(err)
-		return
+		panic(err)
 	}
 
 	request, err := http.NewRequest("POST", ghAuthURL, bytes.NewBuffer(authJSON))
