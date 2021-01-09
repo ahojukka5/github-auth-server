@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -15,7 +14,7 @@ import (
 
 const ghClientIDEnv = "GITHUB_CLIENT_ID"
 const ghClientSecretEnv = "GITHUB_CLIENT_SECRET"
-const ghAuthUrl = "https://github.com/login/oauth/access_token"
+const ghAuthURL = "https://github.com/login/oauth/access_token"
 
 // AuthInfo contains client_id, client_secret and code.
 type AuthInfo struct {
