@@ -73,6 +73,12 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	if authInfo.Code == "" {
+		msg := "Bad request: missing parameter 'code'"
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
 	fmt.Fprintf(w, "authInfo: %+v", authInfo)
 
 }
