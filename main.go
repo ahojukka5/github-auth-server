@@ -78,7 +78,11 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "authInfo: %+v", authInfo)
+	authJSON, err := json.Marshal(&authInfo)
+	if err != nil {
+		println(err)
+		return
+	}
 
 }
 
