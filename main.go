@@ -39,6 +39,24 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var authInfo AuthInfo
+	err := json.NewDecoder(r.Body).Decode(&authInfo)
+	switch {
+
+	case err == io.EOF:
+		msg := "Bad request: empty body"
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+
+	case err != nil:
+		msg := "Bad request: " + err.Error()
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+
+	}
+
+	fmt.Fprintf(w, "authInfo: %+v", authInfo)
+
 }
 
 func main() {
