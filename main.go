@@ -104,23 +104,23 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 	defer response.Body.Close()
 	println(response.Status)
 
-	if response.StatusCode != http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			panic(err)
-		}
-		w.WriteHeader(response.StatusCode)
-		w.Write(bodyBytes)
-		return
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
 	}
 
 	var authResponse AuthResponse
-	err = json.NewDecoder(response.Body).Decode(&authResponse)
+	err = json.Unmarshal(bodyBytes, &authResponse)
 	if err != nil {
 		msg := "Bad response from authentication: " + err.Error()
 		http.Error(w, msg, http.StatusBadRequest)
 		return
+	}
 
+	if response.StatusCode != http.StatusOK || authResponse.Error != "" {
+		w.WriteHeader(response.StatusCode)
+		w.Write(bodyBytes)
+		return
 	}
 }
 
