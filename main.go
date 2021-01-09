@@ -84,7 +84,6 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
-
 	}
 
 	if authInfo.Code == "" {
@@ -113,6 +112,11 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	print("Sending login request to " + ghAuthURL + " ... ")
 	response, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer response.Body.Close()
+	println(response.Status)
 
 	if debug {
 		responseDump, err := httputil.DumpResponse(response, true)
@@ -121,12 +125,6 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(string(responseDump))
 	}
-
-	if err != nil {
-		panic(err)
-	}
-	defer response.Body.Close()
-	println(response.Status)
 
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -172,12 +170,13 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-
 	userInfo.Token = authResponse.AccessToken
+
 	userJSON, err := json.Marshal(&userInfo)
 	if err != nil {
 		panic(err)
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(userJSON)
