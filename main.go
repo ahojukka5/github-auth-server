@@ -170,13 +170,12 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	userInfo.Token = authResponse.AccessToken
 
+	userInfo.Token = authResponse.AccessToken
 	userJSON, err := json.Marshal(&userInfo)
 	if err != nil {
 		panic(err)
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(userJSON)
