@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/golang/gddo/httputil/header"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -29,6 +30,15 @@ type UserInfo struct {
 // GithubAuth is route that takes `client_id` and `code` and returns `login`,
 // `email` and `token`, if authentication is succesful.
 func GithubAuth(w http.ResponseWriter, r *http.Request) {
+
+	value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+	if value != "application/json" {
+		msg := "Content-Type is not application/json"
+		println(msg)
+		http.Error(w, msg, http.StatusUnsupportedMediaType)
+		return
+	}
+
 }
 
 func main() {
