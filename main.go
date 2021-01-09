@@ -8,6 +8,10 @@ import (
 	"github.com/rs/cors"
 )
 
+const ghClientIDEnv = "GITHUB_CLIENT_ID"
+const ghClientSecretEnv = "GITHUB_CLIENT_SECRET"
+const ghAuthUrl = "https://github.com/login/oauth/access_token"
+
 // AuthInfo contains client_id, client_secret and code.
 type AuthInfo struct {
 	ClientID     string `json:"client_id"`
@@ -28,9 +32,8 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	const ghSecretEnv = "GITHUB_CLIENT_SECRET"
-	if _, exists := os.LookupEnv(ghSecretEnv); !exists {
-		println("Environment variable " + ghSecretEnv + " must be set.")
+	if _, exists := os.LookupEnv(ghClientSecretEnv); !exists {
+		println("Environment variable " + ghClientSecretEnv + " must be set.")
 		return
 	}
 	app := mux.NewRouter()
