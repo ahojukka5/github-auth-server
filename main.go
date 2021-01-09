@@ -8,6 +8,20 @@ import (
 	"github.com/rs/cors"
 )
 
+// AuthInfo contains client_id, client_secret and code.
+type AuthInfo struct {
+	ClientID     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	Code         string `json:"code"`
+}
+
+// UserInfo contains logged user info.
+type UserInfo struct {
+	UserName  string `json:"user_name"`
+	UserEmail string `json:"user_email"`
+	Token     string `json:"token"`
+}
+
 // GithubAuth is route that takes `client_id` and `code` and returns `login`,
 // `email` and `token`, if authentication is succesful.
 func GithubAuth(w http.ResponseWriter, r *http.Request) {
