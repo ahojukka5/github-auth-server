@@ -18,6 +18,7 @@ import (
 const ghClientIDEnv = "GITHUB_CLIENT_ID"
 const ghClientSecretEnv = "GITHUB_CLIENT_SECRET"
 const ghAuthURL = "https://github.com/login/oauth/access_token"
+const ghUserInfoURL = "https://api.github.com/user"
 
 // AuthInfo contains client_id, client_secret and code.
 type AuthInfo struct {
