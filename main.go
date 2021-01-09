@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 	"os"
 
 	"github.com/golang/gddo/httputil/header"
@@ -45,6 +46,8 @@ type UserInfo struct {
 // GithubAuth is route that takes `client_id` and `code` and returns `login`,
 // `email` and `token`, if authentication is succesful.
 func GithubAuth(w http.ResponseWriter, r *http.Request) {
+
+	debug := os.Getenv("GITHUB_AUTH_SERVER_DEBUG") != ""
 
 	value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
 	if value != "application/json" {
@@ -98,9 +101,27 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 	request, err := http.NewRequest("POST", ghAuthURL, bytes.NewBuffer(authJSON))
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Accept", "application/json")
+
+	if debug {
+		requestDump, err := httputil.DumpRequest(request, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(string(requestDump))
+	}
+
 	client := &http.Client{}
 	print("Sending login request to " + ghAuthURL + " ... ")
 	response, err := client.Do(request)
+
+	if debug {
+		responseDump, err := httputil.DumpResponse(response, true)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(string(responseDump))
+	}
+
 	if err != nil {
 		panic(err)
 	}
@@ -110,6 +131,10 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		panic(err)
+	}
+
+	if debug {
+		println(string(bodyBytes))
 	}
 
 	var authResponse AuthResponse
