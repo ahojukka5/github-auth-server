@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -37,7 +39,6 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 	value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
 	if value != "application/json" {
 		msg := "Content-Type is not application/json"
-		println(msg)
 		http.Error(w, msg, http.StatusUnsupportedMediaType)
 		return
 	}
@@ -94,6 +95,17 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	defer response.Body.Close()
+	println(response.Status)
+
+	if response.StatusCode != http.StatusOK {
+		bodyBytes, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			panic(err)
+		}
+		w.WriteHeader(response.StatusCode)
+		w.Write(bodyBytes)
+		return
+	}
 
 }
 
