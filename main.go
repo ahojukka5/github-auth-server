@@ -114,6 +114,14 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var authResponse AuthResponse
+	err = json.NewDecoder(response.Body).Decode(&authResponse)
+	if err != nil {
+		msg := "Bad response from authentication: " + err.Error()
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+
+	}
 }
 
 func main() {
