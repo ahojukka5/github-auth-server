@@ -39,9 +39,9 @@ type AuthResponse struct {
 
 // UserInfo contains logged user info.
 type UserInfo struct {
-	UserName  string `json:"user_name"`
-	UserEmail string `json:"user_email"`
-	Token     string `json:"token"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Token string `json:"token"`
 }
 
 // GithubAuth is route that takes `client_id` and `code` and returns `login`,
