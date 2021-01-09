@@ -25,6 +25,13 @@ type AuthInfo struct {
 	Code         string `json:"code"`
 }
 
+// AuthResponse is what Github sends as a response for a request
+type AuthResponse struct {
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+	ErrorURI         string `json:"error_uri"`
+}
+
 // UserInfo contains logged user info.
 type UserInfo struct {
 	UserName  string `json:"user_name"`
