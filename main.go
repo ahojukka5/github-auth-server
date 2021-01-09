@@ -1,6 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"os"
 
@@ -52,6 +56,20 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		msg := "Bad request: " + err.Error()
 		http.Error(w, msg, http.StatusBadRequest)
 		return
+
+	}
+
+	authInfo.ClientSecret = os.Getenv(ghClientSecretEnv)
+
+	if authInfo.ClientID == "" {
+		clientID, exists := os.LookupEnv(ghClientIDEnv)
+		if exists {
+			authInfo.ClientID = clientID
+		} else {
+			msg := "Bad request: missing parameter `client_id`"
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
 
 	}
 
