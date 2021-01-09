@@ -1,4 +1,4 @@
-module ahojukka5.com/react-github-auth/server
+module ahojukka5.com/github-auth-server
 
 go 1.15
 
