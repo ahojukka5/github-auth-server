@@ -150,6 +150,20 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 		w.Write(bodyBytes)
 		return
 	}
+
+	// Send request to fetch user name and email address
+
+	request, err = http.NewRequest("GET", ghUserInfoURL, &bytes.Buffer{})
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "token "+authResponse.AccessToken)
+
+	print("Sending login request to " + ghUserInfoURL + " ... ")
+	response, err = client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer response.Body.Close()
+	println(response.Status)
 }
 
 func main() {
