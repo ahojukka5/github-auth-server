@@ -13,9 +13,7 @@ take a look of another package `react-github-auth` and it's readme[1][1].
 To test with curl:
 
 ```bash
-curl -H "Content-Type: application/json" \
-     -D '{"code": "19da77673aa1f6e140da"}' \
-     localhost:8080
+curl localhost:8080/authenticate/github?code=19da77673aa1f6e140da
 ```
 
 Client id must be given as an environment variable `GITHUB_CLIENT_ID`. Client

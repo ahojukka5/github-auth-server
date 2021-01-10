@@ -4,13 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
 
-	"github.com/golang/gddo/httputil/header"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -50,46 +48,29 @@ func GithubAuth(w http.ResponseWriter, r *http.Request) {
 
 	debug := os.Getenv("GITHUB_AUTH_SERVER_DEBUG") != ""
 
-	value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
-	if value != "application/json" {
-		msg := "Content-Type is not application/json"
-		http.Error(w, msg, http.StatusUnsupportedMediaType)
-		return
-	}
-
 	var authInfo AuthInfo
-	err := json.NewDecoder(r.Body).Decode(&authInfo)
-	switch {
-
-	case err == io.EOF:
-		msg := "Bad request: empty body"
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-
-	case err != nil:
-		msg := "Bad request: " + err.Error()
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-
-	}
-
 	authInfo.ClientSecret = os.Getenv(ghClientSecretEnv)
 
-	if authInfo.ClientID == "" {
+	code, exists := r.URL.Query()["code"]
+	if !exists || len(code[0]) < 1 {
+		msg := "Missing query parameter 'code'"
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	authInfo.Code = code[0]
+
+	clientID, exists := r.URL.Query()["client_id"]
+	if !exists || len(clientID[0]) < 1 {
 		clientID, exists := os.LookupEnv(ghClientIDEnv)
 		if exists {
 			authInfo.ClientID = clientID
 		} else {
-			msg := "Bad request: missing parameter `client_id`"
+			msg := "Missing query parameter `client_id`"
 			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
-	}
-
-	if authInfo.Code == "" {
-		msg := "Bad request: missing parameter 'code'"
-		http.Error(w, msg, http.StatusBadRequest)
-		return
+	} else {
+		authInfo.ClientID = clientID[0]
 	}
 
 	authJSON, err := json.Marshal(&authInfo)
@@ -187,7 +168,7 @@ func main() {
 		return
 	}
 	app := mux.NewRouter()
-	app.HandleFunc("/", GithubAuth).Methods("POST")
+	app.HandleFunc("/authenticate/github", GithubAuth).Methods("GET")
 	println("Server listening on port 8080 ...")
 	err := http.ListenAndServe(":8080", cors.Default().Handler(app))
 	if err != nil {
